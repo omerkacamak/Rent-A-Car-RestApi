@@ -5,25 +5,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/controller"
-	"github.com/omerkacamak/rentacar-golang/entity"
-	"github.com/omerkacamak/rentacar-golang/middleware"
+	"github.com/omerkacamak/rentacar-golang/repository"
+
 	"github.com/omerkacamak/rentacar-golang/service"
 )
 
 var (
-	diziVehicle       []entity.Vehicle
 	vehicleService    service.VehicleService       = service.NewVehicleService()
 	VehicleController controller.VehicleController = controller.NewVehicleController(vehicleService)
 
 	CustomerController controller.CustomerController = controller.NewCustomerController()
 	OrderController    controller.OrderController    = controller.NewOrderController()
+	UserController     controller.UserController     = controller.NewUserController()
 )
+
+func init() {
+	repository.ConnectToDatabase() //burda databaseyi başlattık
+}
 
 func main() {
 
-	server := gin.New()
+	repository.ConnectToDatabase()
 
-	middleware.AutoMigrate()
+	server := gin.New()
 
 	server.Use(gin.Recovery())
 
@@ -56,20 +60,11 @@ func main() {
 
 	apiRoutes2 := server.Group("/customer")
 	{
-		apiRoutes2.GET("/", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, CustomerController.FindAll())
-		})
+		apiRoutes2.GET("/findall", CustomerController.FindAll)
 
-		apiRoutes2.POST("/", func(ctx *gin.Context) {
-			customer, err := CustomerController.Save(ctx)
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			} else {
-				ctx.JSON(http.StatusOK, gin.H{"message": "başarılı",
-					"customer": customer,
-				})
-			}
-		})
+		apiRoutes2.GET("/", CustomerController.FindAll)
+
+		apiRoutes2.POST("/", CustomerController.Save)
 	}
 
 	apiRoutes3 := server.Group("/order")
@@ -100,7 +95,47 @@ func main() {
 			ctx.JSON(http.StatusOK, OrderController.GetAllWithCustomer())
 		})
 	}
-	//middleware.AutoMigrate()
 
-	server.Run(":8080")
+	apiRoutes4 := server.Group("/user")
+	{
+		apiRoutes4.GET("/", func(ctx *gin.Context) {
+			result := UserController.FindAll()
+			for _, val := range result {
+				println("--->Server  " + val.FirstName)
+			}
+			ctx.JSON(http.StatusOK, UserController.FindAll())
+		})
+
+		apiRoutes4.GET("/pass", func(ctx *gin.Context) {
+			result, err := UserController.FindByPassEmail("icardimail", "1905")
+			if err != nil {
+				ctx.JSON(http.StatusNotFound, gin.H{
+					"error": err.Error(),
+				})
+			} else {
+				ctx.JSON(http.StatusOK, result)
+			}
+
+		})
+	}
+
+	apiRoutes5 := server.Group("/login")
+	{
+		apiRoutes5.GET("/gettoken/:name", func(ctx *gin.Context) {
+			var name string
+
+			err := ctx.ShouldBindUri(&name)
+			if err != nil {
+				ctx.AbortWithError(http.StatusBadRequest, err)
+				return
+			}
+
+			println("binduri::. " + name)
+			ctx.JSON(http.StatusOK, gin.H{
+				"mesaj": name,
+			})
+		})
+
+		server.Run(":8080")
+	}
 }

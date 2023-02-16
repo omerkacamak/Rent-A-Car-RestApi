@@ -1,15 +1,23 @@
-package middleware
+package migrate
 
 import (
 	"github.com/omerkacamak/rentacar-golang/entity"
 	"github.com/omerkacamak/rentacar-golang/repository"
 )
 
+func init() {
+	repository.ConnectToDatabase()
+}
+
+func main() {
+	AutoMigrate()
+}
+
 func AutoMigrate() {
 	connection, err := repository.NewDbContext()
 
 	if err != nil {
-		err.Error()
+		println(err.Error())
 		println("automigrate repo patladı")
 	} else {
 		connection.Debug().AutoMigrate(
@@ -21,6 +29,8 @@ func AutoMigrate() {
 			&entity.Order{},
 			&entity.Payment{},
 			&entity.VehicleBrand{},
+			&entity.AuthUser{},
+			&entity.Role{},
 		)
 	}
 

@@ -1,20 +1,33 @@
 package repository
 
 import (
+	"log"
+
 	"gorm.io/driver/postgres"
 
 	"gorm.io/gorm"
 )
 
-type DbContext struct {
-}
+var DB *gorm.DB
 
 func NewDbContext() (*gorm.DB, error) {
+	var err error
 	dsn := "host=localhost user=postgres password=1905 dbname=rentacarorg port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	println("--------->::: eskicontext ")
 	if err != nil {
-		return db, err
+		return DB, err
 	}
-	return db, nil
+	return DB, nil
+}
+
+func ConnectToDatabase() {
+	var err error
+	dsn := "host=localhost user=postgres password=1905 dbname=rentacarorg port=5432 sslmode=disable"
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	println("--------->::: yenicontext ")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 }

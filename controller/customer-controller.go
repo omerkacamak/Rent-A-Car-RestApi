@@ -1,16 +1,18 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/entity"
 	"github.com/omerkacamak/rentacar-golang/service"
 )
 
 type CustomerController interface {
-	Save(ctx *gin.Context) (entity.Customer, error)
-	// Update(vehicle entity.Vehicle) entity.Vehicle
-	// Delete(vehicle entity.Vehicle) bool
-	FindAll() []entity.Customer
+	Save(ctx *gin.Context)
+	Update(ctx *gin.Context)
+	Delete(ctx *gin.Context)
+	FindAll(ctx *gin.Context)
 }
 
 type customerController struct {
@@ -24,21 +26,61 @@ func NewCustomerController() CustomerController {
 	}
 }
 
-func (cst *customerController) Save(ctx *gin.Context) (entity.Customer, error) {
+func (cst *customerController) Save(ctx *gin.Context) {
 	var customer entity.Customer
 	err := ctx.ShouldBindJSON(&customer)
 
 	if err != nil {
-		return customer, err
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	err2 := cst.service.Save(customer)
-	if err2 != nil {
-		return customer, err2
+	err = cst.service.Save(customer)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return customer, nil
+	ctx.JSON(http.StatusOK, customer)
+
+}
+func (cst *customerController) Update(ctx *gin.Context) {
+	var customer entity.Customer
+	err := ctx.ShouldBindJSON(&customer)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = cst.service.Update(customer)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, customer)
+
 }
 
-func (cst *customerController) FindAll() []entity.Customer {
-	return cst.service.FindAll()
+func (cst *customerController) Delete(ctx *gin.Context) {
+	var customer entity.Customer
+	err := ctx.ShouldBindJSON(&customer)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = cst.service.Delete(customer)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, customer)
+
+}
+
+func (cst *customerController) FindAll(ctx *gin.Context) {
+	customers := cst.service.FindAll()
+
+	ctx.JSON(http.StatusOK, customers)
 }

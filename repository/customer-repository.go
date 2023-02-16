@@ -6,9 +6,9 @@ import (
 )
 
 type CustomerRepository interface {
-	Save(customer entity.Customer)
-	Update(customer entity.Customer)
-	Delete(customer entity.Customer)
+	Save(customer entity.Customer) error
+	Update(customer entity.Customer) error
+	Delete(customer entity.Customer) error
 	FindAll() []entity.Customer
 }
 
@@ -17,25 +17,44 @@ type customerRepository struct {
 }
 
 func NewCustomerRepository() CustomerRepository {
-	db, err := NewDbContext()
-	if err != nil {
-		err.Error()
-		println("customer repo patladı")
-	}
-	db.AutoMigrate(&entity.Customer{})
+	// db, err := NewDbContext()
+	// if err != nil {
+	// 	err.Error()
+	// 	println("customer repo patladı")
+	// }
+	// db.AutoMigrate(&entity.Customer{})
 	return &customerRepository{
-		connection: db,
+		connection: DB,
 	}
 }
-func (customerRepo *customerRepository) Save(customer entity.Customer) {
-	customerRepo.connection.Create(&customer)
+func (customerRepo *customerRepository) Save(customer entity.Customer) error {
+	result := customerRepo.connection.Create(&customer)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+
 }
-func (customerRepo *customerRepository) Update(customer entity.Customer) {
-	customerRepo.connection.Save(&customer)
+func (customerRepo *customerRepository) Update(customer entity.Customer) error {
+	result := customerRepo.connection.Save(&customer)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
-func (customerRepo *customerRepository) Delete(customer entity.Customer) {
-	customerRepo.connection.Delete(&customer)
+func (customerRepo *customerRepository) Delete(customer entity.Customer) error {
+	result := customerRepo.connection.Delete(&customer)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 
 }
 
