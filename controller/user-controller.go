@@ -1,19 +1,21 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/entity"
 	"github.com/omerkacamak/rentacar-golang/service"
 )
 
 type UserController interface {
-	Save(ctx *gin.Context) (entity.AuthUser, error)
-	Update(ctx *gin.Context) (entity.AuthUser, error)
-	Delete(ctx *gin.Context) (entity.AuthUser, error)
-	FindAll() []entity.AuthUser
+	Save(ctx *gin.Context)
+	Update(ctx *gin.Context)
+	Delete(ctx *gin.Context)
+	FindAll(ctx *gin.Context)
 
-	FindByPassEmail(email, password string) (entity.AuthUser, error)
-	//GetAllWithCustomer() []entity.Order
+	//FindByPassEmail(ctx *gin.Context)
+	//GetAllWithCustomer(ctx *gin.Context)
 }
 
 type userController struct {
@@ -26,43 +28,56 @@ func NewUserController() UserController {
 	}
 }
 
-func (userContr *userController) Save(ctx *gin.Context) (entity.AuthUser, error) {
+func (userContr *userController) Save(ctx *gin.Context) {
 	var user entity.AuthUser
 	err := ctx.ShouldBindJSON(&user)
 	if err != nil {
-		return user, err
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	userContr.service.Save(user)
-	return user, nil
+	err = userContr.service.Save(user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }
 
-func (userContr *userController) Update(ctx *gin.Context) (entity.AuthUser, error) {
+func (userContr *userController) Update(ctx *gin.Context) {
 	var user entity.AuthUser
 	err := ctx.ShouldBindJSON(&user)
 	if err != nil {
-		return user, err
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	userContr.service.Update(user)
-	return user, nil
+	err = userContr.service.Update(user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }
-func (userContr *userController) Delete(ctx *gin.Context) (entity.AuthUser, error) {
+func (userContr *userController) Delete(ctx *gin.Context) {
 	var user entity.AuthUser
 	err := ctx.ShouldBindJSON(&user)
 	if err != nil {
-		return user, err
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	userContr.service.Update(user)
-	return user, nil
+	err = userContr.service.Delete(user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }
 
-func (userContr *userController) FindAll() []entity.AuthUser {
-	result := userContr.service.FindAll()
-	for _, val := range result {
-		println("--->usercontroller  " + val.FirstName)
-	}
-	return result
-}
+func (userContr *userController) FindAll(ctx *gin.Context) {
+	users := userContr.service.FindAll()
 
-func (userContr *userController) FindByPassEmail(email, password string) (entity.AuthUser, error) {
-	return userContr.service.FindByPassEmail(email, password)
+	ctx.JSON(http.StatusOK, users)
+
 }

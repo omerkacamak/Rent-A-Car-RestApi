@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -10,7 +11,7 @@ import (
 
 type AuthService interface {
 	GenerateToken(email string, password string) (string, error)
-	//ValidateToken(tokenString string) (*jwt.Token, error)
+	ValidateToken(tokenString string) (*jwt.Token, error)
 }
 
 // type customClaims struct {
@@ -21,12 +22,14 @@ type AuthService interface {
 type authService struct {
 	secretKey string
 	issuer    string
+	service   UserService
 }
 
 func NewAuthService() AuthService {
 	return &authService{
 		secretKey: getSecretKey(),
 		issuer:    "omerkacamak.com",
+		service:   NewUserService(),
 	}
 }
 
@@ -39,7 +42,7 @@ func getSecretKey() string {
 }
 
 func (authServ *authService) GenerateToken(email, password string) (string, error) {
-	service := NewUserService()
+	service := authServ.service
 	result, err := service.FindByPassEmail(email, password)
 	if err != nil {
 		return "Kullanıcı yok", err
@@ -62,6 +65,11 @@ func (authServ *authService) GenerateToken(email, password string) (string, erro
 
 }
 
-// func (authServ *authService) ValidateToken(tokenString string) (*jwt.Token, error){
-// 	return "sd", nil
-// }
+func (authServ *authService) ValidateToken(tokenString string) (*jwt.Token, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(authServ.secretKey), nil
+	})
+}

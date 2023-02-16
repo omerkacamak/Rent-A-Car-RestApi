@@ -28,7 +28,7 @@ func NewUserRepository() UserRepository {
 func (userrep *userRepository) Save(user entity.AuthUser) error {
 	result := userrep.connection.Create(&user)
 	if result.Error != nil {
-
+		return result.Error
 	}
 	return nil
 }

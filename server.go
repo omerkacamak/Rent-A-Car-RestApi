@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/controller"
+	"github.com/omerkacamak/rentacar-golang/middleware"
 	"github.com/omerkacamak/rentacar-golang/repository"
 
 	"github.com/omerkacamak/rentacar-golang/service"
@@ -17,6 +18,7 @@ var (
 	CustomerController controller.CustomerController = controller.NewCustomerController()
 	OrderController    controller.OrderController    = controller.NewOrderController()
 	UserController     controller.UserController     = controller.NewUserController()
+	LoginController    controller.LoginController    = controller.NewLoginController()
 )
 
 func init() {
@@ -58,7 +60,7 @@ func main() {
 		})
 	}
 
-	apiRoutes2 := server.Group("/customer")
+	apiRoutes2 := server.Group("/customer", middleware.AuthorizeJWT())
 	{
 		apiRoutes2.GET("/findall", CustomerController.FindAll)
 
@@ -98,43 +100,14 @@ func main() {
 
 	apiRoutes4 := server.Group("/user")
 	{
-		apiRoutes4.GET("/", func(ctx *gin.Context) {
-			result := UserController.FindAll()
-			for _, val := range result {
-				println("--->Server  " + val.FirstName)
-			}
-			ctx.JSON(http.StatusOK, UserController.FindAll())
-		})
+		apiRoutes4.GET("/", UserController.FindAll)
 
-		apiRoutes4.GET("/pass", func(ctx *gin.Context) {
-			result, err := UserController.FindByPassEmail("icardimail", "1905")
-			if err != nil {
-				ctx.JSON(http.StatusNotFound, gin.H{
-					"error": err.Error(),
-				})
-			} else {
-				ctx.JSON(http.StatusOK, result)
-			}
-
-		})
+		apiRoutes4.GET("/apikey/:name/:password", LoginController.GetToken)
 	}
 
 	apiRoutes5 := server.Group("/login")
 	{
-		apiRoutes5.GET("/gettoken/:name", func(ctx *gin.Context) {
-			var name string
-
-			err := ctx.ShouldBindUri(&name)
-			if err != nil {
-				ctx.AbortWithError(http.StatusBadRequest, err)
-				return
-			}
-
-			println("binduri::. " + name)
-			ctx.JSON(http.StatusOK, gin.H{
-				"mesaj": name,
-			})
-		})
+		apiRoutes5.GET("/gettoken/:email/:password", LoginController.GetToken)
 
 		server.Run(":8080")
 	}
