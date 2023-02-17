@@ -12,22 +12,33 @@ func AuthorizeJWT() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		const BEARER_SCHEMA = "Bearer "
 		authHeader := ctx.GetHeader("Authorization")
+		if authHeader != "" {
+			tokenString := authHeader[len(BEARER_SCHEMA):] //bearerın sona git ve sonrasını al
+			println("tokenstrttr: " + tokenString)
+			token, err := service.NewAuthService().ValidateToken(tokenString)
+			if err != nil {
+				//ctx.AbortWithStatus(http.StatusUnauthorized)
 
-		tokenString := authHeader[len(BEARER_SCHEMA):] //bearerın sona git ve sonrasını al
+				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error": err.Error(),
+				})
 
-		println("tokennn:: ", tokenString)
-		token, err := service.NewAuthService().ValidateToken(tokenString)
-
-		if token.Valid {
-			claims := token.Claims.(jwt.MapClaims)
-			println("Claims[Name]: ", claims["name"])
-			println("Claims[Admin]: ", claims["admin"])
-			println("Claims[Issuer]: ", claims["iss"])
-			println("Claims[IssuedAt]: ", claims["iat"])
-			println("Claims[ExpiresAt]: ", claims["exp"])
+				return
+			}
+			if token.Valid {
+				claims := token.Claims.(jwt.MapClaims)
+				println("Claims[Name]: ", claims["name"])
+				println("Claims[Admin]: ", claims["admin"])
+				println("Claims[Issuer]: ", claims["iss"])
+				println("Claims[IssuedAt]: ", claims["iat"])
+				println("Claims[ExpiresAt]: ", claims["exp"])
+			} else {
+				println(err)
+				ctx.AbortWithStatus(http.StatusUnauthorized)
+			}
 		} else {
-			println(err)
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
+
 	}
 }

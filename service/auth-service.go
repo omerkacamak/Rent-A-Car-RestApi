@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -66,10 +65,22 @@ func (authServ *authService) GenerateToken(email, password string) (string, erro
 }
 
 func (authServ *authService) ValidateToken(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
+	// return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	// 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 		return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+	// 	}
+
+	// 	return []byte(authServ.secretKey), nil
+	// })
+	claims := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		return []byte(authServ.secretKey), nil
 	})
+	if err != nil {
+		println("BÜYÜK HATAAAA ::: " + err.Error())
+		return nil, err
+	}
+
+	return token, nil
+
 }
