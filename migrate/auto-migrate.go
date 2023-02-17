@@ -1,4 +1,4 @@
-package migrate
+package main
 
 import (
 	"github.com/omerkacamak/rentacar-golang/entity"

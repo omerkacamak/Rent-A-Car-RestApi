@@ -7,18 +7,13 @@ import (
 	"github.com/omerkacamak/rentacar-golang/controller"
 	"github.com/omerkacamak/rentacar-golang/middleware"
 	"github.com/omerkacamak/rentacar-golang/repository"
-
-	"github.com/omerkacamak/rentacar-golang/service"
+	"github.com/omerkacamak/rentacar-golang/router"
 )
 
 var (
-	vehicleService    service.VehicleService       = service.NewVehicleService()
-	VehicleController controller.VehicleController = controller.NewVehicleController(vehicleService)
-
-	CustomerController controller.CustomerController = controller.NewCustomerController()
-	OrderController    controller.OrderController    = controller.NewOrderController()
-	UserController     controller.UserController     = controller.NewUserController()
-	LoginController    controller.LoginController    = controller.NewLoginController()
+	OrderController controller.OrderController = controller.NewOrderController()
+	UserController  controller.UserController  = controller.NewUserController()
+	LoginController controller.LoginController = controller.NewLoginController()
 )
 
 func init() {
@@ -39,35 +34,18 @@ func main() {
 		})
 	})
 
-	apiRoutes := server.Group("/vehicle")
+	//ROUTERS
+
+	myapi := server.Group("/api", middleware.AuthorizeJWT())
 	{
-		apiRoutes.POST("/", func(ctx *gin.Context) {
-			err := VehicleController.Save(ctx)
-			if err != nil {
-				println("burda hataa")
-				ctx.JSON(http.StatusBadRequest, gin.H{
+		router.CustomerRouter(myapi.Group("/customer"))
+		router.UserRouter(myapi.Group("/user"))
+		router.VehicleRouter(myapi.Group("/vehicle"))
 
-					"error": err.Error(),
-				})
-			} else {
-				ctx.JSON(http.StatusOK, gin.H{"message": "başarılı"})
-			}
-
-		})
-
-		apiRoutes.GET("/", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, VehicleController.FindAll())
-		})
 	}
+	router.LoginRouter(server.Group("/gettoken")) // TOKEN ALINAN ADRESSS
 
-	apiRoutes2 := server.Group("/customer", middleware.AuthorizeJWT())
-	{
-		apiRoutes2.GET("/findall", CustomerController.FindAll)
-
-		apiRoutes2.GET("/", CustomerController.FindAll)
-
-		apiRoutes2.POST("/", CustomerController.Save)
-	}
+	//ROUTERS
 
 	apiRoutes3 := server.Group("/order")
 	{
@@ -98,17 +76,5 @@ func main() {
 		})
 	}
 
-	apiRoutes4 := server.Group("/user")
-	{
-		apiRoutes4.GET("/", UserController.FindAll)
-
-		apiRoutes4.GET("/apikey/:name/:password", LoginController.GetToken)
-	}
-
-	apiRoutes5 := server.Group("/login")
-	{
-		apiRoutes5.GET("/gettoken/:email/:password", LoginController.GetToken)
-
-		server.Run(":8080")
-	}
+	server.Run(":8080")
 }

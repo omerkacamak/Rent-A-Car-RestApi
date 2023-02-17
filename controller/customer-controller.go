@@ -20,7 +20,7 @@ type customerController struct {
 }
 
 func NewCustomerController() CustomerController {
-
+	println("customer controller olustu ********************************")
 	return &customerController{
 		service: service.NewCustomerService(),
 	}

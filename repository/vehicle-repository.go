@@ -7,8 +7,8 @@ import (
 
 type VehicleRepository interface {
 	Save(vehicle entity.Vehicle) error
-	Update(vehicle entity.Vehicle)
-	Delete(vehicle entity.Vehicle)
+	Update(vehicle entity.Vehicle) error
+	Delete(vehicle entity.Vehicle) error
 	FindAll() []entity.Vehicle
 }
 
@@ -31,17 +31,29 @@ func NewVehicleRepository() VehicleRepository {
 func (vehRepo *vehicleRepository) Save(vehicle entity.Vehicle) error {
 	result := vehRepo.connection.Create(&vehicle)
 	if result.Error != nil {
+		println("BÜSBÜYÜK HATA -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-")
 		return result.Error
 	}
+
 	return nil
 
 }
-func (vehRepo *vehicleRepository) Update(vehicle entity.Vehicle) {
-	vehRepo.connection.Save(&vehicle)
+func (vehRepo *vehicleRepository) Update(vehicle entity.Vehicle) error {
+	result := vehRepo.connection.Save(&vehicle)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
-func (vehRepo *vehicleRepository) Delete(vehicle entity.Vehicle) {
-	vehRepo.connection.Delete(&vehicle)
+func (vehRepo *vehicleRepository) Delete(vehicle entity.Vehicle) error {
+	result := vehRepo.connection.Delete(&vehicle)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
 func (vehRepo *vehicleRepository) FindAll() []entity.Vehicle {

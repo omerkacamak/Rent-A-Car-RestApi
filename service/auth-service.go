@@ -47,7 +47,7 @@ func (authServ *authService) GenerateToken(email, password string) (string, erro
 		return "Kullanıcı yok", err
 	} else {
 
-		result.ExpiresAt = time.Now().Add(time.Minute * 2).Unix()
+		result.ExpiresAt = time.Now().Add(time.Minute * 20).Unix()
 		result.IssuedAt = time.Now().Unix()
 		result.Issuer = authServ.issuer
 

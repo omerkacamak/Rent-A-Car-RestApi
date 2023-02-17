@@ -16,6 +16,7 @@ type loginController struct {
 }
 
 func NewLoginController() LoginController {
+	println("login controller olustu ********************************")
 	return &loginController{
 		service: service.NewAuthService(),
 	}

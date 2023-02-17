@@ -23,6 +23,7 @@ type userController struct {
 }
 
 func NewUserController() UserController {
+	println("user controller olustu ********************************")
 	return &userController{
 		service: service.NewUserService(),
 	}

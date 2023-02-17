@@ -1,41 +1,87 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/entity"
 	"github.com/omerkacamak/rentacar-golang/service"
 )
 
 type VehicleController interface {
-	Save(ctx *gin.Context) error
-	// Update(vehicle entity.Vehicle) entity.Vehicle
-	// Delete(vehicle entity.Vehicle) bool
-	FindAll() []entity.Vehicle
+	Save(ctx *gin.Context)
+	Update(ctx *gin.Context)
+	Delete(ctx *gin.Context)
+	FindAll(ctx *gin.Context)
 }
 
 type vehicleController struct {
 	service service.VehicleService
 }
 
-func NewVehicleController(service service.VehicleService) VehicleController {
+func NewVehicleController() VehicleController {
+	println("vehicle controller olustu ********************************")
 	return &vehicleController{
-		service: service,
+		service: service.NewVehicleService(),
 	}
 }
 
-func (vehController *vehicleController) Save(ctx *gin.Context) error {
+func (vehController *vehicleController) Save(ctx *gin.Context) {
 	var vehicle entity.Vehicle
 	err := ctx.ShouldBindJSON(&vehicle)
 
 	if err != nil {
-		return err
+
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	err2 := vehController.service.Save(vehicle)
-	if err2 != nil {
-		return err2
+	err = vehController.service.Save(vehicle)
+	if err != nil {
+
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return nil
+	ctx.JSON(http.StatusOK, vehicle)
+
 }
-func (vehController *vehicleController) FindAll() []entity.Vehicle {
-	return vehController.service.FindAll()
+
+func (vehController *vehicleController) Update(ctx *gin.Context) {
+	var vehicle entity.Vehicle
+	err := ctx.ShouldBindJSON(&vehicle)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err = vehController.service.Update(vehicle)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, vehicle)
+
+}
+
+func (vehController *vehicleController) Delete(ctx *gin.Context) {
+	var vehicle entity.Vehicle
+	err := ctx.ShouldBindJSON(&vehicle)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err = vehController.service.Delete(vehicle)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, vehicle)
+
+}
+
+func (vehController *vehicleController) FindAll(ctx *gin.Context) {
+	customers := vehController.service.FindAll()
+
+	ctx.JSON(http.StatusOK, customers)
+
 }

@@ -20,7 +20,7 @@ type orderController struct {
 }
 
 func NewOrderController() OrderController {
-
+	println("order controller olustu ********************************")
 	return &orderController{
 		service: service.NewOrderService(),
 	}

@@ -7,8 +7,8 @@ import (
 
 type VehicleService interface {
 	Save(vehicle entity.Vehicle) error
-	Update(vehicle entity.Vehicle) entity.Vehicle
-	Delete(vehicle entity.Vehicle) bool
+	Update(vehicle entity.Vehicle) error
+	Delete(vehicle entity.Vehicle) error
 	FindAll() []entity.Vehicle
 }
 
@@ -28,21 +28,28 @@ func (vehServ *vehicleService) Save(vehicles entity.Vehicle) error {
 	//vehServ.vehicle = append(vehServ.vehicle, vehicles)
 	err := vehServ.vehicleRepo.Save(vehicles)
 	if err != nil {
+		println("servise de düştü")
 		return err
 	}
 	return nil
 }
 
-func (vehServ *vehicleService) Update(vehicles entity.Vehicle) entity.Vehicle {
+func (vehServ *vehicleService) Update(vehicles entity.Vehicle) error {
 	//vehServ.vehicle = append(vehServ.vehicle, vehicles)
-	vehServ.vehicleRepo.Update(vehicles)
-	return vehicles
+	err := vehServ.vehicleRepo.Update(vehicles)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (vehServ *vehicleService) Delete(vehicles entity.Vehicle) bool {
+func (vehServ *vehicleService) Delete(vehicles entity.Vehicle) error {
 	//vehServ.vehicle = append(vehServ.vehicle, vehicles)
-	vehServ.vehicleRepo.Delete(vehicles)
-	return true
+	err := vehServ.vehicleRepo.Delete(vehicles)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (vehServ *vehicleService) FindAll() []entity.Vehicle {
