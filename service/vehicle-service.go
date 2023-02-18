@@ -28,7 +28,7 @@ func (vehServ *vehicleService) Save(vehicles entity.Vehicle) error {
 	//vehServ.vehicle = append(vehServ.vehicle, vehicles)
 	err := vehServ.vehicleRepo.Save(vehicles)
 	if err != nil {
-		println("servise de düştü")
+
 		return err
 	}
 	return nil

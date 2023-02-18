@@ -6,9 +6,9 @@ import (
 )
 
 type OrderRepository interface {
-	Save(order entity.Order)
-	Update(order entity.Order)
-	Delete(order entity.Order)
+	Save(order entity.Order) error
+	Update(order entity.Order) error
+	Delete(order entity.Order) error
 	FindAll() []entity.Order
 
 	GetAllWithCustomer() []entity.Order
@@ -29,15 +29,31 @@ func NewOrderRepository() OrderRepository {
 		connection: db,
 	}
 }
-func (orderRepo *orderRepository) Save(order entity.Order) {
-	orderRepo.connection.Create(&order)
+func (orderRepo *orderRepository) Save(order entity.Order) error {
+	result := orderRepo.connection.Create(&order)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+
 }
-func (orderRepo *orderRepository) Update(order entity.Order) {
-	orderRepo.connection.Save(&order)
+func (orderRepo *orderRepository) Update(order entity.Order) error {
+	result := orderRepo.connection.Save(&order)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
-func (orderRepo *orderRepository) Delete(order entity.Order) {
-	orderRepo.connection.Delete(&order)
+func (orderRepo *orderRepository) Delete(order entity.Order) error {
+	result := orderRepo.connection.Delete(&order)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
 func (orderRepo *orderRepository) FindAll() []entity.Order {

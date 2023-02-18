@@ -41,40 +41,12 @@ func main() {
 		router.CustomerRouter(myapi.Group("/customer"))
 		router.UserRouter(myapi.Group("/user"))
 		router.VehicleRouter(myapi.Group("/vehicle"))
+		router.OrderRouter(myapi.Group("/order"))
 
 	}
 	router.LoginRouter(server.Group("/gettoken")) // TOKEN ALINAN ADRESSS
 
 	//ROUTERS
-
-	apiRoutes3 := server.Group("/order")
-	{
-		//get
-		apiRoutes3.GET("/", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, OrderController.FindAll())
-		})
-
-		//post
-		apiRoutes3.POST("/", func(ctx *gin.Context) {
-			order, err := OrderController.Save(ctx)
-			if err != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"error": err.Error(),
-				})
-			} else {
-				ctx.JSON(http.StatusOK, gin.H{
-					"message": "başarılı",
-					"order":   order,
-				})
-			}
-
-		})
-
-		// withcustomer
-		apiRoutes3.GET("/withCustomer", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, OrderController.GetAllWithCustomer())
-		})
-	}
 
 	server.Run(":8080")
 }
