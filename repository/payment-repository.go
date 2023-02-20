@@ -11,7 +11,8 @@ type PaymentRepository interface {
 	Delete(payment entity.Payment) error
 	FindAll() []entity.Payment
 
-	GetPaymentByOrderId(id int) (entity.Payment, error)
+	GetPaymentByOrderId(id int) (*entity.Payment, error) // order id ye göre payment getirme
+	GetPaymentsWithOrder() (*[]entity.Payment, error)
 }
 
 type paymentRepository struct {
@@ -54,11 +55,28 @@ func (paymentRepo *paymentRepository) FindAll() []entity.Payment {
 	return payments
 }
 
-func (paymentRepo *paymentRepository) GetPaymentByOrderId(id int) (entity.Payment, error) {
-	var payment = entity.Payment{OrderID: id}
-	result := paymentRepo.connection.First(&payment)
+func (paymentRepo *paymentRepository) GetPaymentByOrderId(id int) (*entity.Payment, error) {
+	var payment entity.Payment
+
+	result := paymentRepo.connection.Where("order_id= ?", id).First(&payment)
+	//result := paymentRepo.connection.Where(&entity.Payment{OrderID: id}).First(&payment)
+	var payo = &entity.Payment{ID: 1, CreditCardID: 1, OrderID: 1}
+
 	if result.Error != nil {
-		return payment, result.Error
+		println("hata var hata hata :: + " + result.Error.Error())
+
+		return payo, result.Error
 	}
-	return payment, nil
+	return &payment, nil
+}
+
+func (paymentRepo *paymentRepository) GetPaymentsWithOrder() (*[]entity.Payment, error) {
+	var payments []entity.Payment
+
+	err := paymentRepo.connection.Set("gorm:preload", true).Preload("Order").Find(&payments).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &payments, nil
 }

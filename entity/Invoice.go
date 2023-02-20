@@ -11,9 +11,9 @@ type Invoice struct {
 	TotalRentDays int       `json:"totalRentDays"`
 	TotalPrice    float64   `json:"totalPrice"`
 
-	CustomerID int      `json:"-"`
-	Customer   Customer `json:"customer" gorm:"foreignKey:CustomerID"`
+	CustomerID int       `json:"-"`
+	Customer   *Customer `json:"customer,omitempty" gorm:"foreignKey:CustomerID"`
 
-	PaymentID int     `json:"-"`
-	Payment   Payment `json:"payment" gorm:"foreignKey:PaymentID"`
+	PaymentID int      `json:"-"`
+	Payment   *Payment `json:"payment,omitempty" gorm:"foreignKey:PaymentID"`
 }

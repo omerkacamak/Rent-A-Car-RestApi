@@ -11,7 +11,8 @@ type PaymentService interface {
 	Delete(payment entity.Payment) error
 	FindAll() []entity.Payment
 
-	GetPaymentByOrderId(id int) (entity.Payment, error)
+	GetPaymentByOrderId(id int) (*entity.Payment, error)
+	GetPaymentsWithOrder() (*[]entity.Payment, error)
 }
 
 type paymentService struct {
@@ -54,11 +55,20 @@ func (paymentServ *paymentService) FindAll() []entity.Payment {
 	return result
 }
 
-func (paymentServ *paymentService) GetPaymentByOrderId(id int) (entity.Payment, error) {
+func (paymentServ *paymentService) GetPaymentByOrderId(id int) (*entity.Payment, error) {
+
 	result, err := paymentServ.repo.GetPaymentByOrderId(id)
 
 	if err != nil {
-		return entity.Payment{}, err
+		return nil, err
+	}
+	return result, nil
+}
+
+func (paymentServ *paymentService) GetPaymentsWithOrder() (*[]entity.Payment, error) {
+	result, err := paymentServ.repo.GetPaymentsWithOrder()
+	if err != nil {
+		return nil, err
 	}
 	return result, nil
 }

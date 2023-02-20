@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/controller"
-	"github.com/omerkacamak/rentacar-golang/middleware"
 	"github.com/omerkacamak/rentacar-golang/repository"
 	"github.com/omerkacamak/rentacar-golang/router"
 )
@@ -28,6 +27,9 @@ func main() {
 
 	server.Use(gin.Recovery())
 
+	//swagger ekleme
+	//server.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	server.GET("/hello", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"hello": "merhaba",
@@ -36,7 +38,7 @@ func main() {
 
 	//ROUTERS
 
-	myapi := server.Group("/api", middleware.AuthorizeJWT())
+	myapi := server.Group("/api" /*, middleware.AuthorizeJWT()*/)
 	{
 		router.CustomerRouter(myapi.Group("/customer"))
 		router.UserRouter(myapi.Group("/user"))

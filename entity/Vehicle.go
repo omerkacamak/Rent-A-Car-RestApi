@@ -10,6 +10,6 @@ type Vehicle struct {
 	Bluetooth  bool          `json:"bluetooth"`
 	Navigation bool          `json:"navigation"`
 
-	BrandID      int          `json:"brandid"`
-	VehicleBrand VehicleBrand `json:"brand" gorm:"foreignKey:BrandID"`
+	BrandID      int           `json:"brandid"`
+	VehicleBrand *VehicleBrand `json:"vehicleBrand,omitempty" gorm:"foreignKey:BrandID"`
 }

@@ -12,5 +12,6 @@ func PaymentRouter(router *gin.RouterGroup) {
 	router.PATCH("/", ctrl.Update)
 	router.DELETE("/", ctrl.Delete)
 
-	router.GET("/oderid", ctrl.GetPaymentByOrderId)
+	router.GET("/:id", ctrl.GetPaymentByOrderId) // orderid'ye göre payment getir
+	router.GET("/withorder", ctrl.GetPaymentsWithOrder)
 }
