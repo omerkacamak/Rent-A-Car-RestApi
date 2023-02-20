@@ -12,7 +12,4 @@ type Vehicle struct {
 
 	BrandID      int          `json:"brandid"`
 	VehicleBrand VehicleBrand `json:"brand" gorm:"foreignKey:BrandID"`
-
-	// ColorID VehicleColor `json:"-"`
-	// Color   VehicleColor `json:"color" gorm:"foreignKey:ColorID;references:ID"`
 }

@@ -50,9 +50,7 @@ func (userServ *userService) Delete(user entity.AuthUser) error {
 }
 func (userServ *userService) FindAll() []entity.AuthUser {
 	result := userServ.userRepo.FindAll()
-	for _, val := range result {
-		println("--->userserv  " + val.FirstName)
-	}
+
 	return result
 }
 

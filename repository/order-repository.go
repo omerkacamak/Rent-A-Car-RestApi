@@ -19,14 +19,9 @@ type orderRepository struct {
 }
 
 func NewOrderRepository() OrderRepository {
-	db, err := NewDbContext()
-	if err != nil {
-		err.Error()
-		println("order repo patladı")
-	}
-	db.AutoMigrate(&entity.Order{})
+
 	return &orderRepository{
-		connection: db,
+		connection: DB,
 	}
 }
 func (orderRepo *orderRepository) Save(order entity.Order) error {

@@ -20,8 +20,8 @@ type Order struct {
 	VehicleID int     `json:"-"`
 	Vehicle   Vehicle `json:"vehicle" gorm:"foreignKey:VehicleID"`
 
-	CustomerID int      `json:"-"`
-	Customer   Customer `json:"customer" gorm:"foreignKey:CustomerID"`
+	CustomerID int      `json:"CustomerID"`
+	Customer   Customer `json:"-" gorm:"foreignKey:CustomerID"`
 
 	CreatedAt time.Time ` json:"created_at"`
 	UpdatedAt time.Time ` json:"updated_at"`

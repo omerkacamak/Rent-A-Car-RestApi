@@ -42,6 +42,8 @@ func main() {
 		router.UserRouter(myapi.Group("/user"))
 		router.VehicleRouter(myapi.Group("/vehicle"))
 		router.OrderRouter(myapi.Group("/order"))
+		router.CreditCardRouter(myapi.Group("/creditcard"))
+		router.PaymentRouter(myapi.Group("/payment"))
 
 	}
 	router.LoginRouter(server.Group("/gettoken")) // TOKEN ALINAN ADRESSS
