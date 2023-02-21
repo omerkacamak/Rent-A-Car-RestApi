@@ -60,7 +60,7 @@ func (paymentRepo *paymentRepository) GetPaymentByOrderId(id int) (*entity.Payme
 
 	result := paymentRepo.connection.Where("order_id= ?", id).First(&payment)
 	//result := paymentRepo.connection.Where(&entity.Payment{OrderID: id}).First(&payment)
-	var payo = &entity.Payment{ID: 1, CreditCardID: 1, OrderID: 1}
+	var payo = &entity.Payment{ID: 1, CreditCardID: 1, OrderID: &id}
 
 	if result.Error != nil {
 		println("hata var hata hata :: + " + result.Error.Error())

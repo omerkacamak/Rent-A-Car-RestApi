@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/omerkacamak/rentacar-golang/controller"
+	"github.com/omerkacamak/rentacar-golang/middleware"
 	"github.com/omerkacamak/rentacar-golang/repository"
 	"github.com/omerkacamak/rentacar-golang/router"
 )
@@ -38,7 +39,7 @@ func main() {
 
 	//ROUTERS
 
-	myapi := server.Group("/api" /*, middleware.AuthorizeJWT()*/)
+	myapi := server.Group("/api", middleware.AuthorizeJWT())
 	{
 		router.CustomerRouter(myapi.Group("/customer"))
 		router.UserRouter(myapi.Group("/user"))
@@ -46,6 +47,7 @@ func main() {
 		router.OrderRouter(myapi.Group("/order"))
 		router.CreditCardRouter(myapi.Group("/creditcard"))
 		router.PaymentRouter(myapi.Group("/payment"))
+		router.InvoiceRouter(myapi.Group("/invoice"))
 
 	}
 	router.LoginRouter(server.Group("/gettoken")) // TOKEN ALINAN ADRESSS

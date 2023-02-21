@@ -6,9 +6,8 @@ import (
 	"github.com/omerkacamak/rentacar-golang/entity"
 )
 
-func CustomerRouter(router *gin.RouterGroup) {
-	//ctrl := controller.NewCustomerController()
-	genCtrl := controller.NewGenericController[entity.Customer]()
+func InvoiceRouter(router *gin.RouterGroup) {
+	genCtrl := controller.NewGenericController[entity.Invoice]()
 	router.GET("/", genCtrl.FindAll)
 	router.POST("/", genCtrl.Save)
 	router.PATCH("/:id", genCtrl.Update)

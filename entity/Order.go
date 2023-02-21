@@ -11,13 +11,13 @@ type Order struct {
 	OrderStatus bool      `json:"orderstatus"`
 	OrderPrice  float64   `json:"orderprice"`
 
-	RentCityID int   `json:"-"`
+	RentCityID *int  `json:"-"`
 	RentCity   *City `json:"rentCity,omitempty" gorm:"foreignKey:RentCityID"`
 
-	ReturnCityID int   `json:"-"`
+	ReturnCityID *int  `json:"-"`
 	ReturnCity   *City `json:"returnCity,omitempty" gorm:"foreignKey:ReturnCityID"`
 
-	VehicleID int      `json:"-"`
+	VehicleID *int     `json:"-"`
 	Vehicle   *Vehicle `json:"vehicle,omitempty" gorm:"foreignKey:VehicleID"`
 
 	CustomerID int       `json:"CustomerID"`

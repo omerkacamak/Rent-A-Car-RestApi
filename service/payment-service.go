@@ -6,11 +6,6 @@ import (
 )
 
 type PaymentService interface {
-	Save(payment entity.Payment) error
-	Update(payment entity.Payment) error
-	Delete(payment entity.Payment) error
-	FindAll() []entity.Payment
-
 	GetPaymentByOrderId(id int) (*entity.Payment, error)
 	GetPaymentsWithOrder() (*[]entity.Payment, error)
 }
@@ -23,36 +18,6 @@ func NewPaymentService() PaymentService {
 	return &paymentService{
 		repo: repository.NewPaymentRepository(),
 	}
-}
-
-func (paymentServ *paymentService) Save(payment entity.Payment) error {
-	err := paymentServ.repo.Save(payment)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (paymentServ *paymentService) Update(payment entity.Payment) error {
-	err := paymentServ.repo.Update(payment)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (paymentServ *paymentService) Delete(payment entity.Payment) error {
-	err := paymentServ.repo.Delete(payment)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (paymentServ *paymentService) FindAll() []entity.Payment {
-	result := paymentServ.repo.FindAll()
-
-	return result
 }
 
 func (paymentServ *paymentService) GetPaymentByOrderId(id int) (*entity.Payment, error) {

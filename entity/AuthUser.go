@@ -14,6 +14,6 @@ type AuthUser struct {
 
 	jwt.StandardClaims `gorm:"-"`
 
-	RoleId int   `json:"-"`
+	RoleId *int  `json:"-"`
 	Role   *Role `json:"role,omitempty" gorm:"foreignKey:RoleId"`
 }
