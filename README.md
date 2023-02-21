@@ -8,4 +8,6 @@ Most of the backend side of the application has been completed, but there are st
 After most of the backend processes are finished, frontend work is also planned to take place.
 It is a starter project for api programming with Go
 
-## ER Diagram for RentACar 
+## ER Diagram for Rent-A-Car 
+![erd](https://user-images.githubusercontent.com/66026835/220361534-5cf2482d-0576-48fd-9312-afb1a75e386f.png)
+
